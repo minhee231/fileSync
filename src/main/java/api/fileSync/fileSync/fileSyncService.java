@@ -17,7 +17,7 @@ import java.util.Map;
 @RequestMapping("/api/files")
 public class fileSyncService {
 
-	@Value("${server.savePath}")
+	@Value("${server.fileSavePath}")
 	private String BASE_DIR;
 
 	public fileSyncService(@Value("${server.savePath}") String savePath) {
