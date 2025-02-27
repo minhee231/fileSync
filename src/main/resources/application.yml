@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: fileSync
+
+server:
+  port: 8081
+  savePath: "/app"
