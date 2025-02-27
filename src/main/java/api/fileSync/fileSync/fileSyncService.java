@@ -20,7 +20,7 @@ public class fileSyncService {
 	@Value("${server.fileSavePath}")
 	private String BASE_DIR;
 
-	public fileSyncService(@Value("${server.savePath}") String savePath) {
+	public fileSyncService(@Value("${server.fileSavePath}") String savePath) {
 		// 파일 저장 경로 생성 (존재하지 않으면 폴더 생성)
 
 		this.BASE_DIR = savePath;
