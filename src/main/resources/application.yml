@@ -4,4 +4,4 @@ spring:
 
 server:
   port: 8081
-  fileSavePath: "C:/MUCH/fileSync"
+  fileSavePath: "C:/MUCH/Filesearch"
