@@ -1,5 +1,7 @@
 package api.fileSync.fileSync;
 
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/files")
 public class fileSyncService {
@@ -51,10 +54,18 @@ public class fileSyncService {
 	 * 파일 업로드
 	 */
 	@PostMapping("/upload")
-	public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
+	public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file, HttpServletRequest request) {
+		logRequestParameters(request);
 		try {
 			String filePath = BASE_DIR + File.separator + file.getOriginalFilename();
+			log.info(filePath);
 			File targetFile = new File(filePath);
+
+			// 부모 디렉토리까지 생성
+			File parentDir = targetFile.getParentFile();
+			if (!parentDir.exists()) {
+				parentDir.mkdirs(); // 디렉터리 없으면 생성
+			}
 
 			// 파일 접근 가능 여부 확인
 			if (targetFile.exists() && isFileAccessible(targetFile)) {
@@ -62,12 +73,13 @@ public class fileSyncService {
 			}
 
 			// 파일 저장
-			file.transferTo(new File(filePath));
+			file.transferTo(targetFile);
 			return ResponseEntity.ok("파일 업로드 성공: " + filePath);
 		} catch (IOException e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("파일 업로드 실패: " + e.getMessage());
 		}
 	}
+
 
 	/**
 	 * 파일 삭제
@@ -110,4 +122,17 @@ public class fileSyncService {
 	}
 
 
+	//테스트
+	private void logRequestParameters(HttpServletRequest request) {
+		Map<String, String[]> parameterMap = request.getParameterMap();
+
+		for (Map.Entry<String, String[]> entry : parameterMap.entrySet()) {
+			String paramName = entry.getKey();
+			String[] paramValues = entry.getValue();
+			System.out.println("파라미터 이름: " + paramName);
+			for (String paramValue : paramValues) {
+				System.out.println("파라미터 값: " + paramValue);
+			}
+		}
+	}
 }

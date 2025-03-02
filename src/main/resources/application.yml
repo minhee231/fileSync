@@ -2,6 +2,16 @@ spring:
   application:
     name: fileSync
 
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 1GB  # 최대 파일 크기 1GB로 설정
+      max-request-size: 1GB  # 최대 요청 크기 1GB로 설정
+
 server:
   port: 8081
   fileSavePath: "C:/MUCH/Filesearch"
+
+  # Tomcat의 최대 POST 크기 설정
+  tomcat:
+    max-http-form-post-size: 1GB
