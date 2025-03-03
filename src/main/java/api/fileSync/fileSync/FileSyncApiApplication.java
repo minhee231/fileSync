@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class FileSyncApiApplication {
     public static void main(String[] args) {
         SpringApplication.run(FileSyncApiApplication.class, args);
-        new fileSyncService();
+        /*new fileSyncService();*/
 
     }
 }
