@@ -5,11 +5,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 @Slf4j
 @Service
@@ -105,6 +108,18 @@ public class FileSyncService {
             log.warn("파일이 존재하지 않습니다: {}", file.getAbsolutePath());
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("파일을 찾을 수 없습니다");
+        }
+    }
+
+    public ResponseEntity<Boolean> fileExists(String path) {
+        try {
+            // 주어진 파일 이름이 baseDir에 존재하는지 확인
+            boolean fileExists = Files.exists(Paths.get(BASE_DIR, path)); // BASE_DIR 활용
+            return ResponseEntity.ok(fileExists);
+        } catch (Exception e) {
+            // 예외 발생 시 BAD_REQUEST 상태 반환
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(false);
         }
     }
 

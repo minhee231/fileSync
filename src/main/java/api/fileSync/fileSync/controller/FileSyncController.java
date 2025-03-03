@@ -36,16 +36,8 @@ public class FileSyncController {
         return fileSyncService.deleteFile(path);
     }
 
-//    @GetMapping("/exists")
-//    public ResponseEntity<Boolean> fileExists(@RequestParam String fileName) {
-//		try {
-//			// 주어진 파일 이름이 baseDir에 존재하는지 확인
-//			boolean fileExists = Files.exists(Paths.get(BASE_DIR, fileName)); // BASE_DIR 활용
-//			return ResponseEntity.ok(fileExists);
-//		} catch (Exception e) {
-//			// 예외 발생 시 BAD_REQUEST 상태 반환
-//			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-//					.body(false);
-//		}
-//	}
+    @GetMapping("/exists")
+    public ResponseEntity<Boolean> fileExists(@RequestParam String path) throws IOException {
+		return fileSyncService.fileExists(path);
+	}
 }
