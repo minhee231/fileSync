@@ -83,4 +83,30 @@ public class FileSyncService {
         }
     }
 
+    public ResponseEntity<Object> deleteFile(String path) {
+        // 파일 경로 설정
+        File file = new File(BASE_DIR + File.separator + path);
+        log.info("file is {}", file.getAbsolutePath());
+
+        // 파일이 존재하는지 확인
+        if (file.exists()) {
+            // 파일 삭제 시도
+            boolean deleted = file.delete();
+
+            if (deleted) {
+                log.info("파일 삭제 성공: {}", file.getAbsolutePath());
+                return ResponseEntity.ok().body("파일 삭제 성공");
+            } else {
+                log.error("파일 삭제 실패: {}", file.getAbsolutePath());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("파일 삭제 실패");
+            }
+        } else {
+            log.warn("파일이 존재하지 않습니다: {}", file.getAbsolutePath());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("파일을 찾을 수 없습니다");
+        }
+    }
+
+
 }
