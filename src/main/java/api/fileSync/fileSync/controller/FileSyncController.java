@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Path;
 
 @Slf4j
 @RestController
@@ -18,7 +19,11 @@ public class FileSyncController {
     private FileSyncService fileSyncService;
 
     @PostMapping("/upload")
-    public ResponseEntity<Object> uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
-        return fileSyncService.createFile(file);
+    public ResponseEntity<Object> uploadFile(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("path")String path
+            ) throws IOException {
+        log.info(path + " 경로!!!!!");
+        return fileSyncService.createFile(file, path);
     }
 }
