@@ -133,49 +133,56 @@ public class FileSyncService {
         }
     }
 
-    public ResponseEntity<Object> rmdir(String path) {
-        String normalizedPath = path.replace("/", File.separator).replace("\\", File.separator);
+    public ResponseEntity<Object> deleteDirectory(String path) {
+            try {
+                // 디렉토리 삭제 요청
+                String normalizedPath = path.replace("/", File.separator).replace("\\", File.separator);
+                File dir = new File(BASE_DIR + File.separator + normalizedPath);
 
-        File dir;
-
-        // 확장자가 있는 경우 → 파일이므로 디렉토리 경로만 추출
-        if (normalizedPath.contains(".") && normalizedPath.lastIndexOf(".") > normalizedPath.lastIndexOf(File.separator)) {
-            String directoryPath = normalizedPath.substring(0, normalizedPath.lastIndexOf(File.separator));
-            dir = new File(BASE_DIR + File.separator + directoryPath);
-        } else {
-            // 확장자가 없는 경우 → 디렉토리 그대로 사용
-            dir = new File(BASE_DIR + File.separator + normalizedPath);
-        }
-
-        // 디렉토리 삭제
-        if (dir.exists()) {
-            boolean deleted = deleteDirectory(dir);
-            if (deleted) {
-                System.out.println("디렉토리 삭제 완료: " + dir.getAbsolutePath());
-                return ResponseEntity.ok("디렉토리 삭제 완료: " + dir.getAbsolutePath());
-            } else {
-                System.out.println("디렉토리 삭제 실패: " + dir.getAbsolutePath());
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("디렉토리 삭제 실패: " + dir.getAbsolutePath());
+                if (dir.exists() && dir.isDirectory()) {
+                    boolean deleted = deleteDirectory(dir);
+                    if (deleted) {
+                        log.info("디렉토리 삭제 완료: {}", dir.getAbsolutePath());
+                        return ResponseEntity.ok("디렉토리 삭제 완료: " + dir.getAbsolutePath());
+                    } else {
+                        log.error("디렉토리 삭제 실패: {}", dir.getAbsolutePath());
+                        return ResponseEntity.status(500).body("디렉토리 삭제 실패: " + dir.getAbsolutePath());
+                    }
+                } else {
+                    log.error("디렉토리가 존재하지 않습니다: {}", dir.getAbsolutePath());
+                    return ResponseEntity.status(404).body("디렉토리가 존재하지 않습니다: " + dir.getAbsolutePath());
+                }
+            } catch (Exception e) {
+                log.error("디렉토리 삭제 중 오류 발생", e);
+                return ResponseEntity.status(500).body("디렉토리 삭제 중 오류 발생");
             }
-        } else {
-            System.out.println("디렉토리가 존재하지 않습니다: " + dir.getAbsolutePath());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("디렉토리가 존재하지 않습니다: " + dir.getAbsolutePath());
         }
-    }
 
-    // 하위 폴더와 파일까지 삭제하는 재귀 메서드
-    private boolean deleteDirectory(File dir) {
-        if (dir.isDirectory()) {
-            File[] files = dir.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    deleteDirectory(file);
+        // 디렉토리 및 하위 파일을 재귀적으로 삭제하는 메서드
+        private boolean deleteDirectory(File dir) {
+            if (dir.isDirectory()) {
+                File[] files = dir.listFiles();
+                if (files != null) {
+                    for (File file : files) {
+                        deleteDirectory(file); // 재귀 호출
+                    }
                 }
             }
+            return dir.delete();
         }
-        return dir.delete();
-    }
 
 
+    // 하위 폴더와 파일까지 삭제하는 재귀 메서드
+//    private boolean deleteDirectory(File dir) {
+//        if (dir.isDirectory()) {
+//            File[] files = dir.listFiles();
+//            if (files != null) {
+//                for (File file : files) {
+//                    deleteDirectory(file);
+//                }
+//            }
+//        }
+//        return dir.delete();
+//    }
 
 }

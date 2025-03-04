@@ -44,4 +44,10 @@ public class FileSyncController {
 
         return fileSyncService.mkdirs(path);
     }
+
+    @DeleteMapping("/deleteDirectory")
+    public ResponseEntity<Object> deleteDirectory(@RequestBody Map<String, String> payload) {
+        String path = payload.get("path");
+        return fileSyncService.deleteDirectory(path);
+    }
 }
