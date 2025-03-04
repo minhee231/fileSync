@@ -21,10 +21,7 @@ public class FileSyncController {
 
     @PostMapping("/upload")
     public ResponseEntity<Object> uploadFile(
-            @RequestParam("file") MultipartFile file,
-            @RequestParam("path")String path
-            ) throws IOException {
-        log.info(path + " 경로!!!!!");
+            @RequestParam("file") MultipartFile file, @RequestParam("path")String path) throws IOException {
         return fileSyncService.createFile(file, path);
     }
 
@@ -40,4 +37,11 @@ public class FileSyncController {
     public ResponseEntity<Boolean> fileExists(@RequestParam String path) throws IOException {
 		return fileSyncService.fileExists(path);
 	}
+
+    @PostMapping("/update/dir")
+    public ResponseEntity<Object> updateDir(@RequestBody Map<String, String> payload) throws IOException {
+        String path = payload.get("path");
+
+        return fileSyncService.mkdirs(path);
+    }
 }
